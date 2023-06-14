@@ -1,0 +1,107 @@
+--PRIMER PREGUNTA:
+--HACER UN EJEMPLO SOBRE COMO LA ESCUELA TESOEM UTILIZARÍA LA HERRAMIENTA POWER BI Y EN QUE AYUDARÍA
+--Supongamos que el TESO recopila datos sobre el rendimiento académico de los estudiantes, las tasas de asistencia, las calificaciones de los profesores,etc. Con Power BI la escuela podría integrar y visualizar estos datos de manera efectiva, lo que permitiría obtener datos valiosos para mejorar la calidad educativa y la toma de decisiones.
+--Por ejemplo podría crear paneles de control interactivos que muestren el rendimiento académico de los estudiantes en diferentes áreas, como matemáticas, ciencias y lenguaje. Estos paneles podrían incluir gráficos y tablas que representen las calificaciones promedio, el progreso a lo largo del tiempo y las comparativas entre grupos.
+--Permitiría identificar patrones y tendencias, como qué asignaturas presentan mayores dificultades para los estudiantes o si existe alguna correlación entre la asistencia y el rendimiento académico. Esto ayudaria a la escuela a implementar estrategias de mejora y personalización de la enseñanza.
+
+
+--CREACIÓN DE TABLAS
+create table primertabla ( 
+ id number(12), 
+ nombre_p varchar(50), 
+ tipo varchar(35), 
+ costo number(10)); 
+  
+ create table segundatabla( 
+ descripción varchar(100)); 
+  
+ drop table primertabla; 
+ drop table segundatabla; 
+  
+ insert into primertabla values(001,'donitas','pan',20); 
+ insert into primertabla values(002,'rebanada','pan',10); 
+ insert into primertabla values(003,'mantecadas','pan',25); 
+ insert into primertabla values(004,'nito','pan',15); 
+ insert into primertabla values(005,'buñuelos','pan',20); 
+ insert into primertabla values(021,'doritos','botana',15); 
+ insert into primertabla values(022,'paketaxo','botana',56); 
+ insert into primertabla values(023,'Sabritas adobadas','botana',35); 
+ insert into primertabla values(024,'crujitos','botana',15); 
+ insert into primertabla values(025,'sabritones','botana',50); 
+ insert into primertabla values(051,'pulparindo','dulce',8); 
+ insert into primertabla values(052,'picafresa','dulce',2); 
+ insert into primertabla values(053,'mazapan','dulce',8); 
+ insert into primertabla values(054,'panditas','dulce',18); 
+ insert into primertabla values(055,'dragoncito','dulce',3); 
+  
+  select * from primertabla; 
+  select * from segundatabla; 
+  
+--1er Ejercicio
+ CREATE OR REPLACE TRIGGER regi 
+ AFTER INSERT OR UPDATE OR DELETE 
+ ON primertabla 
+ FOR EACH ROW 
+ BEGIN 
+     IF INSERTING THEN 
+         INSERT INTO segundatabla VALUES ('Se ha insertado un nuevo dato en tb_a'); 
+     ELSIF UPDATING THEN 
+         INSERT INTO segundatabla VALUES ('Se ha actualizado un dato en tb_a'); 
+     ELSIF DELETING THEN 
+         INSERT INTO segundatabla VALUES ('Se ha borrado un dato en tb_a'); 
+     END IF; 
+ END; 
+  
+ delete from primertabla where costo =10; 
+ update primertabla set costo = 10 where tipo='pan'; 
+  
+  select * from primertabla; 
+      select * from segundatabla; 
+  
+ --2do Ejercicio
+ CREATE OR REPLACE TRIGGER letra_d 
+ AFTER INSERT 
+ ON primertabla
+ FOR EACH ROW 
+ DECLARE 
+     inicial varchar(1); 
+ BEGIN 
+  
+     inicial := UPPER(SUBSTR(:NEW.nombre_p, 1, 1)); 
+  
+     IF inicial = 'D' THEN 
+  
+         INSERT INTO segundatabla
+         VALUES ('Se agregó un producto con letra D confecha ' || TO_CHAR(SYSTIMESTAMP, 'DD-MON-YYYY HH24:MI:SS')); 
+     END IF; 
+ END; 
+  
+  
+ --3er Ejercicio
+ CREATE OR REPLACE TRIGGER eliminar12 
+ AFTER DELETE 
+ ON primertabla 
+ FOR EACH ROW 
+ BEGIN 
+     IF :OLD.costo <= 12 THEN 
+         INSERT INTO segundatabla  VALUES ( 'SE ELIMINO UN PRODUCTO HUMILDE MENOR A MI PASAJE'); 
+     END IF; 
+ END;
+ 
+ 
+ --PREGUNTA 5
+ --INVESTIGAR CUALES SON LOS MÉTODOS DE RESPALDO, MÉTODOS DE RECUPERACIÓN, MIGRACIÓN DE UNA BASE DE DATOS EN GENERAL DE UN SGBD Y EN ORACLE.
+ 
+--Métodos de respaldo:
+--Copias de seguridad físicas: Se realiza una copia exacta de los archivos de datos y de control del SGBD, lo que permite restaurar la base de datos en caso de pérdida de datos o fallos.
+--Copias de seguridad lógicas: Se realiza una copia de los datos a través de sentencias SQL o herramientas de exportación/importación, lo que facilita la migración de la base de datos a otro entorno.
+--Copias de seguridad incrementales: Solo se respaldan los cambios realizados desde la última copia de seguridad completa o incremental, lo que reduce el tiempo y el espacio de almacenamiento requeridos para los respaldos.
+
+--Métodos de recuperación:
+--Rollback (deshacer): Permite deshacer una transacción incompleta o incorrecta, restaurando la base de datos a un estado anterior.
+--Rollforward (repetir): Permite repetir o aplicar los cambios registrados en los registros de transacciones para recuperar una base de datos después de un fallo o pérdida de datos.
+--Puntos de recuperación: Se establecen puntos de control en la base de datos, lo que facilita la recuperación hasta un estado consistente en caso de fallos.
+
+--Métodos de migración:
+--Oracle Data Pump: Proporciona una manera rápida y eficiente de mover grandes volúmenes de datos y objetos de una base de datos a otra.
+--Transportable Tablespace: Permite mover tablas y datos de una base de datos Oracle a otra, aprovechando los archivos de datos existentes.
